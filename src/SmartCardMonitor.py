@@ -1,4 +1,4 @@
-from smartcard.CardMonitoring import CardMonitoring, CardObserver
+from smartcard.CardMonitoring import CardMonitor, CardObserver
 from smartcard.util import *
 from smartcard.Exceptions import NoCardException
 from smartcard.System import readers

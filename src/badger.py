@@ -23,7 +23,9 @@ def main():
 
 	while 1:
 		try: time.sleep(2)
-		except KeyboardInterrupt: break
+		except:  #only wanted to catch KeyboardInterrupt, but was working weirdly with py2exe output
+			print "Quitting."
+			break
 
 	lock.shutdown()
 

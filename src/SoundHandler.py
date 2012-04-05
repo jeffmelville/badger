@@ -1,6 +1,6 @@
 from BadgerHandler import *
 import winsound
-DEBUG = True
+DEBUG = False
 class SoundHandler(BadgerHandler):
 
 	def __init__ (self, state=None, path=None):
