@@ -1,7 +1,10 @@
 from distutils.core import setup
 import py2exe
 
-files = [('', ['freakingidiot.wav', 'config.json'])]
+files = [('', ['freakingidiot.wav', 'config.json', 'badger.png'])]
 
-setup(console=['badger.py'],
-    data_files = files)
+setup(windows=['badger.pyw'],
+    data_files = files,
+    options = {
+    "py2exe": {"dll_excludes": ["MSVCP90.dll"]}
+    })
