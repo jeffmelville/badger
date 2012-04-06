@@ -21,9 +21,9 @@ class BadgerDispatcher:
 		if last_inserted == inserted: return
 		for handler in self.handlers:
 			if inserted: 
-				handler.on_insert()
+				handler.on_insert(iself.state)
 			else:
-				handler.on_remove()
+				handler.on_remove(self.state)
 
 
 	def update_locked (self, locked): 
@@ -32,8 +32,8 @@ class BadgerDispatcher:
 		if last_locked == locked: return
 		for handler in self.handlers:
 			if locked: 
-				handler.on_lock()
+				handler.on_lock(self.state)
 			else:
-				handler.on_unlock()
+				handler.on_unlock(self.state)
 
 	

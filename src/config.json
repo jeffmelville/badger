@@ -1,0 +1,1 @@
+{"handlers": [{"name": "PrintHandler"}, {"config": {"path": "freakingidiot.wav"}, "name": "SoundHandler"}]}

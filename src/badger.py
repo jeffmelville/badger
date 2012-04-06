@@ -4,12 +4,31 @@ from BadgerDispatcher import *
 from LockMonitor import *
 from SoundHandler import *
 import time
+import json
+
+handler_map = {"SoundHandler": SoundHandler, "PrintHandler": PrintHandler}
 def main():
+	try:
+		config = json.loads(open("config.json", 'r').read())
+	except:
+		print "Configuration error. Quit"
+		return
+	if not "handlers" in config:
+		print "Invalid configuration file. Quit"
+		return
+	handlers = config["handlers"]
 	state = BadgerState()
-	printhandler = PrintHandler(state)
+	printhandler = PrintHandler()
 	dispatcher = BadgerDispatcher(state)
-	dispatcher.add_handler(printhandler)
-	dispatcher.add_handler(SoundHandler(state, "freakingidiot.wav"))
+	#set up handlers
+	for handler in handlers:
+		handler_name = handler.get("name", "NO_HANDLER")
+		if handler_name not in handler_map:
+			print "Skipping unrecognized handler: %s" % (handler_name)
+			continue
+		handler_type = handler_map[handler_name]
+		dispatcher.add_handler(handler_type(config = handler.get("config", None)))
+		print "Added handler: %s" % handler_name
 	lock = LockMonitor(dispatcher)
 	state.set_locked(lock.get_status())
 	lock.monitor()

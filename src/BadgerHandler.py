@@ -1,9 +1,9 @@
 class BadgerHandler:
-	def __init__ (self, state):
-		self.state = state
+	def __init__ (self, config=None):
+		self.config = config
 
-	def on_insert(self): pass
-	def on_remove(self): pass
-	def on_lock(self): pass
-	def on_unlock(self): pass
+	def on_insert(self, state): pass
+	def on_remove(self, state): pass
+	def on_lock(self, state): pass
+	def on_unlock(self, state): pass
 	
