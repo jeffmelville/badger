@@ -7,6 +7,8 @@ import time
 import json
 import wx
 
+APP_NAME = "Badger"
+VERSION = 0.2
 TRAY_TOOLTIP = "Badger!"
 TRAY_ICON = 'badger.png'
 
@@ -23,8 +25,8 @@ class TaskBarIcon(wx.TaskBarIcon):
 		self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_left_down)
 	def CreatePopupMenu(self):
 		menu = wx.Menu()
-		#create_menu_item(menu, 'Enabled', self.on_enabled)
-		#menu.AppendSeparator()
+		create_menu_item(menu, 'About', self.on_about)
+		menu.AppendSeparator()
 		create_menu_item(menu, 'Exit', self.on_exit)
 		return menu
 
@@ -33,7 +35,10 @@ class TaskBarIcon(wx.TaskBarIcon):
 		self.SetIcon(icon, TRAY_TOOLTIP)
 
 	def on_left_down(self, event): pass
-	def on_enabled (self, event): pass
+	def on_about(self, event): 
+		dlg = wx.MessageDialog( None, "%s v. %s by Jeff Melville" % (APP_NAME, VERSION), "About", wx.OK)
+		dlg.ShowModal()
+		dlg.Destroy()
 	def on_exit (self, event):
 		wx.CallAfter(self.Destroy)
 
