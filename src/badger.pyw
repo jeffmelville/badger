@@ -3,6 +3,7 @@ from PrintHandler import *
 from BadgerDispatcher import *
 from LockMonitor import *
 from SoundHandler import *
+from EmailHandler import *
 import time
 import json
 import wx
@@ -42,7 +43,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 	def on_exit (self, event):
 		wx.CallAfter(self.Destroy)
 
-handler_map = {"SoundHandler": SoundHandler, "PrintHandler": PrintHandler}
+handler_map = {"SoundHandler": SoundHandler, "PrintHandler": PrintHandler, "EmailHandler": EmailHandler}
 def main():
 	app = wx.PySimpleApp()
 	try:

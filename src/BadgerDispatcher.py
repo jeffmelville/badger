@@ -21,7 +21,7 @@ class BadgerDispatcher:
 		if last_inserted == inserted: return
 		for handler in self.handlers:
 			if inserted: 
-				handler.on_insert(iself.state)
+				handler.on_insert(self.state)
 			else:
 				handler.on_remove(self.state)
 
