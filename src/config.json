@@ -1,1 +1,1 @@
-{"handlers": [{"name": "PrintHandler"}, {"config": {"path": "freakingidiot.wav", "enable": true}, "name": "SoundHandler"}, {"name": "EmailHandler", "config": {"server": "localhost", "from": "badger@you.com", "to": "you@you.com", "enable": true}}]}
+{"handlers": [{"name": "PrintHandler"}, {"config": {"path": "freakingidiot.wav", "enable": true}, "name": "SoundHandler"}, {"name": "EmailHandler", "config": {"server": "localhost", "from": "badger@you.com", "to": "you@you.com", "enable": false}}]}

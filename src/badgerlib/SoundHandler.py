@@ -1,9 +1,9 @@
-from BadgerHandler import *
+import badgerlib
 import winsound
-class SoundHandler(BadgerHandler):
+class SoundHandler(badgerlib.Handler):
 
     def __init__ (self, config=None):
-        BadgerHandler.__init__(self, config)
+        badgerlib.Handler.__init__(self, config)
         if self.config:
             self.path = self.config.get("path", "freakingidiot.wav")
             self.enable = self.config.get("enable", True)

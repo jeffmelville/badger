@@ -1,4 +1,4 @@
-class BadgerState:
+class State:
 	def __init__ (self, inserted=False, locked=False):
 		self.inserted = inserted
 		self.locked = locked

@@ -1,9 +1,4 @@
-from BadgerState import *
-from PrintHandler import *
-from BadgerDispatcher import *
-from LockMonitor import *
-from SoundHandler import *
-from EmailHandler import *
+import badgerlib
 import time
 import json
 import wx
@@ -43,7 +38,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 	def on_exit (self, event):
 		wx.CallAfter(self.Destroy)
 
-handler_map = {"SoundHandler": SoundHandler, "PrintHandler": PrintHandler, "EmailHandler": EmailHandler}
+handler_map = {"SoundHandler": badgerlib.SoundHandler, "PrintHandler": badgerlib.PrintHandler, "EmailHandler": badgerlib.EmailHandler}
 def main():
 	app = wx.PySimpleApp()
 	try:
@@ -55,9 +50,9 @@ def main():
 		print "Invalid configuration file. Quit"
 		return
 	handlers = config["handlers"]
-	state = BadgerState()
-	printhandler = PrintHandler()
-	dispatcher = BadgerDispatcher(state)
+	state = badgerlib.State()
+	printhandler = badgerlib.PrintHandler()
+	dispatcher = badgerlib.Dispatcher(state)
 	#set up handlers
 	for handler in handlers:
 		handler_name = handler.get("name", "NO_HANDLER")
@@ -67,15 +62,14 @@ def main():
 		handler_type = handler_map[handler_name]
 		dispatcher.add_handler(handler_type(config = handler.get("config", None)))
 		print "Added handler: %s" % handler_name
-	lock = LockMonitor(dispatcher)
+	lock = badgerlib.LockMonitor(dispatcher)
 	state.set_locked(lock.get_status())
 	lock.monitor()
-	try:
-		from SmartCardMonitor import SmartCardMonitor
-		sc = SmartCardMonitor(dispatcher)
+	if badgerlib.SmartCardMonitor:
+		sc = badgerlib.SmartCardMonitor(dispatcher)
 		state.set_inserted(sc.get_status())
 		sc.monitor()
-	except ImportError: 
+	else: 
 		print "Did not import smart card module"
 
 	TaskBarIcon()

@@ -1,10 +1,10 @@
-from BadgerHandler import *
+import badgerlib
 import smtplib
 from email.mime.text import MIMEText
-class EmailHandler(BadgerHandler):
+class EmailHandler(badgerlib.Handler):
 
     def __init__ (self, config=None):
-        BadgerHandler.__init__(self, config)
+        badgerlib.Handler.__init__(self, config)
         if self.config:
             self.enabled = self.config.get("enable", True)
             self.from_addr = self.config.get("from", "nobody@nobody.com")
@@ -14,7 +14,7 @@ class EmailHandler(BadgerHandler):
             self.server = self.config.get("server", "localhost")
 
     def on_lock(self, state):
-        if not state.get_inserted() or self.config is None:
+        if not state.get_inserted() or self.config is None or not self.enabled:
             return
         msg = MIMEText(self.message)
         msg['Subject'] = self.subject

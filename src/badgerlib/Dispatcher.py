@@ -1,11 +1,10 @@
-from BadgerState import BadgerState
-from BadgerHandler import BadgerHandler
+import badgerlib
 
-class BadgerDispatcher:
+class Dispatcher:
 	def __init__ (self, state=None): 
 		self.handlers = []
 		if state is None:
-			state = BadgerState()
+			state = badgerlib.State()
 		self.state = state
 
 	def add_handler (self, handler):

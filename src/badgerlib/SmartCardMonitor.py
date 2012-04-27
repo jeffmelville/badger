@@ -3,7 +3,6 @@ from smartcard.util import *
 from smartcard.Exceptions import NoCardException
 from smartcard.System import readers
 
-
 class SmartCardMonitor(CardObserver):
 	def __init__ (self, dispatcher): 
 		self.dispatcher = dispatcher
