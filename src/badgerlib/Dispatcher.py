@@ -14,7 +14,18 @@ class Dispatcher:
 	def remove_handler (self, handler):
 		self.handlers.remove(handler)
 
-	def update_inserted (self, inserted): 
+	def update_param(self, param, value, initial=False):
+		if param=="inserted":
+			self.update_inserted(value,initial)
+		elif param=="locked": 
+			self.update_locked(value, initial)
+		else:
+			raise ValueError
+
+	def update_inserted (self, inserted, initial=False): 
+		if initial:
+			self.state.set_inserted(inserted)
+			return
 		last_inserted = self.state.get_inserted()
 		self.state.set_inserted(inserted)
 		if last_inserted == inserted: return
@@ -25,7 +36,10 @@ class Dispatcher:
 				handler.on_remove(self.state)
 
 
-	def update_locked (self, locked): 
+	def update_locked (self, locked, initial=False): 
+		if initial:
+			self.state.set_locked(locked)
+			return
 		last_locked = self.state.get_locked()
 		self.state.set_locked(locked)
 		if last_locked == locked: return

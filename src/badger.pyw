@@ -38,7 +38,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 	def on_exit (self, event):
 		wx.CallAfter(self.Destroy)
 
-handler_map = {"SoundHandler": badgerlib.SoundHandler, "PrintHandler": badgerlib.PrintHandler, "EmailHandler": badgerlib.EmailHandler}
+handler_map = {"SoundHandler": badgerlib.SoundHandler, "PrintHandler": badgerlib.PrintHandler, "EmailHandler": badgerlib.EmailHandler, "PopupHandler": badgerlib.PopupHandler}
 def main():
 	app = wx.PySimpleApp()
 	try:
@@ -63,11 +63,9 @@ def main():
 		dispatcher.add_handler(handler_type(config = handler.get("config", None)))
 		print "Added handler: %s" % handler_name
 	lock = badgerlib.LockMonitor(dispatcher)
-	state.set_locked(lock.get_status())
 	lock.monitor()
 	if badgerlib.SmartCardMonitor:
 		sc = badgerlib.SmartCardMonitor(dispatcher)
-		state.set_inserted(sc.get_status())
 		sc.monitor()
 	else: 
 		print "Did not import smart card module"

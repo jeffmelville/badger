@@ -12,6 +12,7 @@ class LockMonitor:
 		self.dispatcher = dispatcher
 		self.running = True
 		self.poll_interval = poll_interval
+		self.dispatcher.update_locked(self.get_status(), initial=True)
 
 	def get_status (self): 
 			hDesktop = OpenDesktop("default", 0, False, DESKTOP_SWITCHDESKTOP)

@@ -6,6 +6,7 @@ from smartcard.System import readers
 class SmartCardMonitor(CardObserver):
 	def __init__ (self, dispatcher): 
 		self.dispatcher = dispatcher
+		self.dispatcher.update_inserted(self.get_status(), initial=True)
 
 	def get_status(self): 
 		cards = 0

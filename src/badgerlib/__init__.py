@@ -5,6 +5,7 @@ from Dispatcher import *
 from LockMonitor import *
 from SoundHandler import *
 from EmailHandler import *
+from PopupHandler import *
 try:
     from SmartCardMonitor import SmartCardMonitor
 except ImportError:
