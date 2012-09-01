@@ -26,9 +26,11 @@
 import badgerlib
 import smtplib
 from email.mime.text import MIMEText
+
+
 class EmailHandler(badgerlib.Handler):
 
-    def __init__ (self, config=None):
+    def __init__(self, config=None):
         badgerlib.Handler.__init__(self, config)
         if self.config:
             self.enabled = self.config.get("enable", True)
@@ -41,6 +43,9 @@ class EmailHandler(badgerlib.Handler):
     def on_lock(self, state):
         if not state.get_inserted() or self.config is None or not self.enabled:
             return
+        self.alert_threaded()
+
+    def alert(self, **keywords):
         msg = MIMEText(self.message)
         msg['Subject'] = self.subject
         msg['From'] = self.from_addr
@@ -51,7 +56,3 @@ class EmailHandler(badgerlib.Handler):
             s.quit()
         except:
             print "SMTP Error"
-
-
-
-            

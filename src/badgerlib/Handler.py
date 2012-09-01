@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import threading
+
 class Handler:
 	def __init__ (self, config=None):
 		self.config = config
@@ -31,4 +33,19 @@ class Handler:
 	def on_remove(self, state): pass
 	def on_lock(self, state): pass
 	def on_unlock(self, state): pass
+	def alert(self, **keywords): 
+		"""
+		Override this function to implement alert actions
+		"""
+		pass
+	def alert_threaded(self, **keywords): 
+		"""
+		Run the overriden "alert" function
+		in a new thread if desired. Handler's that do not return
+		instantly should override alert, and call alert_threaded
+		to perform processing in a new thread to prevent sequential
+		processing of handlers
+		All arguments from keywords will be passed directly to alert
+		"""
+		threading.Thread(target=self.alert, kwargs=keywords).start()
 	

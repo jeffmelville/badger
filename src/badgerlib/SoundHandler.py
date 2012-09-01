@@ -25,9 +25,11 @@
 
 import badgerlib
 import winsound
+
+
 class SoundHandler(badgerlib.Handler):
 
-    def __init__ (self, config=None):
+    def __init__(self, config=None):
         badgerlib.Handler.__init__(self, config)
         if self.config:
             self.path = self.config.get("path", "freakingidiot.wav")
@@ -36,5 +38,8 @@ class SoundHandler(badgerlib.Handler):
     def on_lock(self, state):
         if not state.get_inserted() or not self.enable:
             return
-        winsound.PlaySound(self.path, winsound.SND_FILENAME)
+        self.alert_threaded()
 
+    #overridden from badglib.Handler.alert()
+    def alert(self, **keywords):
+        winsound.PlaySound(self.path, winsound.SND_FILENAME)

@@ -27,13 +27,15 @@ import badgerlib
 import ctypes
 import time
 
+
 class PopupHandler(badgerlib.Handler):
     MB_ICONEXCLAMATION = 0x30
     MB_SYSTEMMODAL = 0x1000
     MB_SERVICE_NOTIFICATION = 0x200000L
     MB_SETFOREGROUND = 0x00010000L
     MB_TOPMOST = 0x00040000L
-    def __init__ (self, config=None):
+
+    def __init__(self, config=None):
         badgerlib.Handler.__init__(self, config)
         self.enable = False
         self.delay = 0.5
@@ -46,5 +48,12 @@ class PopupHandler(badgerlib.Handler):
     def on_lock(self, state):
         if not state.get_inserted() or not self.enable:
             return
+        self.alert_threaded()
+
+    #overrides badgerlib.Handler.alert()
+    def alert(self, **keywords):
+        #TODO: This is technically not thread safe if we ever allow modifying params at runtime
+        #Should use the keyword args
         time.sleep(self.delay)
-        print "Messagebox: %d" % (ctypes.windll.User32.MessageBoxA(None, self.message, "Badger", self.MB_SERVICE_NOTIFICATION  | self.MB_ICONEXCLAMATION | self.MB_SYSTEMMODAL )) # | self.MB_SETFOREGROUND | self.MB_TOPMOST)
+        ctypes.windll.User32.MessageBoxA(None, self.message, "Badger",
+            self.MB_SERVICE_NOTIFICATION | self.MB_ICONEXCLAMATION | self.MB_SYSTEMMODAL)
