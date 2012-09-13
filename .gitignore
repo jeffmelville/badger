@@ -1,2 +1,5 @@
+badger-*.zip
 *.pyc
 build
+dist
+local
