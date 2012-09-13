@@ -30,6 +30,7 @@ from smartcard.System import readers
 
 class SmartCardMonitor(CardObserver):
 	def __init__ (self, dispatcher): 
+		self.cards = 0
 		self.dispatcher = dispatcher
 		self.dispatcher.update_inserted(self.get_status(), initial=True)
 
@@ -41,7 +42,8 @@ class SmartCardMonitor(CardObserver):
 				connection.connect()
 				cards = cards + 1
 			except NoCardException: pass
-		return (cards > 0)
+		self.cards = cards
+		return (self.cards > 0)
 
 
 	def monitor (self): 
@@ -52,7 +54,9 @@ class SmartCardMonitor(CardObserver):
 		self.cardmonitor.deleteObserver(self)
 
 	def update (self, observable, (addedcards, removedcards)):
-		if addedcards: 
+		#update the number of cards currently inserted in the system
+		self.cards = self.cards + len(addedcards) - len(removedcards)
+		if self.cards > 0: 
 			self.dispatcher.update_inserted(True)
-		elif removedcards:
+		else:
 			self.dispatcher.update_inserted(False)
