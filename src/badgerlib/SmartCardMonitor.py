@@ -29,34 +29,34 @@ from smartcard.Exceptions import NoCardException
 from smartcard.System import readers
 
 class SmartCardMonitor(CardObserver):
-	def __init__ (self, dispatcher): 
-		self.cards = 0
-		self.dispatcher = dispatcher
-		self.dispatcher.update_inserted(self.get_status(), initial=True)
+    def __init__ (self, dispatcher): 
+        self.cards = 0
+        self.dispatcher = dispatcher
+        self.dispatcher.update_inserted(self.get_status(), initial=True)
 
-	def get_status(self): 
-		cards = 0
-		for reader in readers():
-			try: 
-				connection = reader.createConnection()
-				connection.connect()
-				cards = cards + 1
-			except NoCardException: pass
-		self.cards = cards
-		return (self.cards > 0)
+    def get_status(self): 
+        cards = 0
+        for reader in readers():
+            try: 
+                connection = reader.createConnection()
+                connection.connect()
+                cards = cards + 1
+            except NoCardException: pass
+        self.cards = cards
+        return (self.cards > 0)
 
 
-	def monitor (self): 
-		self.cardmonitor = CardMonitor()
-		self.cardmonitor.addObserver(self)
+    def monitor (self): 
+        self.cardmonitor = CardMonitor()
+        self.cardmonitor.addObserver(self)
 
-	def shutdown (self): 
-		self.cardmonitor.deleteObserver(self)
+    def shutdown (self): 
+        self.cardmonitor.deleteObserver(self)
 
-	def update (self, observable, (addedcards, removedcards)):
-		#update the number of cards currently inserted in the system
-		self.cards = self.cards + len(addedcards) - len(removedcards)
-		if self.cards > 0: 
-			self.dispatcher.update_inserted(True)
-		else:
-			self.dispatcher.update_inserted(False)
+    def update (self, observable, (addedcards, removedcards)):
+        #update the number of cards currently inserted in the system
+        self.cards = self.cards + len(addedcards) - len(removedcards)
+        if self.cards > 0: 
+            self.dispatcher.update_inserted(True)
+        else:
+            self.dispatcher.update_inserted(False)
