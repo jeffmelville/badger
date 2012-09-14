@@ -29,7 +29,7 @@ import json
 import wx
 
 APP_NAME = "Badger"
-VERSION = 0.31
+VERSION = 0.5
 TRAY_TOOLTIP = "Badger!"
 TRAY_ICON = 'badger.png'
 
