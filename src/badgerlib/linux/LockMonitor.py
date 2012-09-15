@@ -23,6 +23,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import subprocess
+import threading
+
 class LockMonitor:
     def __init__(self, dispatcher, parent=None):
 
@@ -31,10 +34,33 @@ class LockMonitor:
         self.dispatcher = dispatcher
         #self.dispatcher.update_locked(self.get_status(), initial=True)
         self.dispatcher.update_locked(False)
+        self.proc = None
+        self.running = False
 
     def get_status(self):
         return self.screen_locked
 
-    def monitor(self): pass
+    def monitor(self):
+        if self.proc: self.shutdown()
+        self.proc = subprocess.Popen("xscreensaver-command -watch",shell=True, stdout=subprocess.PIPE)
+        self.proc_reader = threading.Thread(target=self.run)
+        self.running = True
+        self.proc_reader.start()
 
-    def shutdown(self): pass
+
+    def shutdown(self):
+        #TODO: Not sure this will terminate correctly
+        if self.proc: self.proc.terminate()
+        self.running = False
+        self.proc = None
+
+    def run(self):
+        for line in iter(self.proc.stdout.readline,''):
+            if "UNBLANK" in line:
+                self.screen_locked = False
+            elif "LOCK" in line:
+                self.screen_locked = True
+            else:
+                continue
+            self.dispatcher.update_locked(self.screen_locked)
+
