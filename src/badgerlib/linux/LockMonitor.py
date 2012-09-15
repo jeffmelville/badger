@@ -23,23 +23,44 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import badgerlib
-import winsound
+import subprocess
+import threading
+
+class LockMonitor:
+    def __init__(self, dispatcher, parent=None):
+
+        self.screen_locked = False
+        self.monitoring = False
+        self.dispatcher = dispatcher
+        #self.dispatcher.update_locked(self.get_status(), initial=True)
+        self.dispatcher.update_locked(False)
+        self.proc = None
+        self.running = False
+
+    def get_status(self):
+        return self.screen_locked
+
+    def monitor(self):
+        if self.proc: self.shutdown()
+        self.proc = subprocess.Popen("xscreensaver-command -watch",shell=True, stdout=subprocess.PIPE)
+        self.proc_reader = threading.Thread(target=self.run)
+        self.running = True
+        self.proc_reader.start()
 
 
-class SoundHandler(badgerlib.Handler):
+    def shutdown(self):
+        #TODO: Not sure this will terminate correctly
+        if self.proc: self.proc.terminate()
+        self.running = False
+        self.proc = None
 
-    def __init__(self, config=None):
-        badgerlib.Handler.__init__(self, config)
-        if self.config:
-            self.path = self.config.get("path", "freakingidiot.wav")
-            self.enable = self.config.get("enable", True)
+    def run(self):
+        for line in iter(self.proc.stdout.readline,''):
+            if "UNBLANK" in line:
+                self.screen_locked = False
+            elif "LOCK" in line:
+                self.screen_locked = True
+            else:
+                continue
+            self.dispatcher.update_locked(self.screen_locked)
 
-    def on_lock(self, state):
-        if not state.get_inserted() or not self.enable:
-            return
-        self.alert_threaded()
-
-    #overridden from badglib.Handler.alert()
-    def alert(self, **keywords):
-        winsound.PlaySound(self.path, winsound.SND_FILENAME)
