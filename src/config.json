@@ -1,6 +1,7 @@
 {"handlers": [
     {"name": "PopupHandler", "config": {"enable": true, "delay": 0.5, "message": "Smartcard Still Inserted!"}},
     {"name": "SoundHandler", "config": {"path": "freakingidiot.wav", "enable": true}}, 
-    {"name": "EmailHandler", "config": {"server": "localhost", "from": "badger@you.com", "to": "you@you.com", "enable": false}}
+    {"name": "EmailHandler", "config": {"server": "localhost", "from": "badger@you.com", "to": "you@you.com", "enable": false}},
+    {"name": "PrintHandler"}
     ]
 }
