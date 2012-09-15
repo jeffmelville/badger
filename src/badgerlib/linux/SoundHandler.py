@@ -25,4 +25,9 @@
 
 import badgerlib
 
-class SoundHandler(badgerlib.Handler): pass
+
+class SoundHandler(badgerlib.SoundHandlerCommand):
+
+    def __init__(self, config=None):
+        badgerlib.SoundHandlerCommand.__init__(self, config)
+        self.set_playcommand("aplay")

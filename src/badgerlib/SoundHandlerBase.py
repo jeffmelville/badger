@@ -24,16 +24,27 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import badgerlib
-import winsound
 
-
-class SoundHandler(badgerlib.SoundHandlerBase):
+class SoundHandlerBase(badgerlib.Handler):
 
     def __init__(self, config=None):
-        badgerlib.SoundHandlerBase.__init__(self, config)
+        badgerlib.Handler.__init__(self, config)
+        if self.config:
+            self.path = self.config.get("path", "freakingidiot.wav")
+            self.enable = self.config.get("enable", True)
 
-    def play_sound(self, filepath):
+    def on_lock(self, state):
+        if not state.get_inserted() or not self.enable:
+            return
+        self.alert_threaded()
+
+    #overridden from badglib.Handler.alert()
+    def alert(self, **keywords):
+        self.play_sound(self.path)
+
+    def play_sound(self, filepath): 
         """
-        Overriden from badgerlib.SoundHandlerBase
+        Override this method to implement the actual playing of the sound,
+        the file to play is located at filepath
         """
-        winsound.PlaySound(filepath, winsound.SND_FILENAME)
+        pass

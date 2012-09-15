@@ -24,16 +24,31 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import badgerlib
-import winsound
+import os
 
 
-class SoundHandler(badgerlib.SoundHandlerBase):
+class SoundHandlerCommand(badgerlib.SoundHandlerBase):
+    """
+    Base class for SoundHandlers that will execute a command to play the sound file.
+    Use set_playcommand to set the command to execute, either externally or
+    in a subclass constructor
+    """
 
     def __init__(self, config=None):
         badgerlib.SoundHandlerBase.__init__(self, config)
+        #dummy command by default
+        self.play_command = "echo"
+
+    def set_playcommand(self, cmd):
+        """
+        Set the command to be executed to play a sound.
+        The sound file will be appended to the end as the final
+        argument
+        """
+        self.play_command = cmd
 
     def play_sound(self, filepath):
         """
-        Overriden from badgerlib.SoundHandlerBase
+        Overridden from badgerlib.SoundHandlerBase
         """
-        winsound.PlaySound(filepath, winsound.SND_FILENAME)
+        os.system("%s %s" % (self.play_command, filepath))
