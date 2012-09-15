@@ -27,11 +27,13 @@ import badgerlib
 import time
 import json
 import wx
+import sys
 
 APP_NAME = "Badger"
 VERSION = 0.5
 TRAY_TOOLTIP = "Badger!"
 TRAY_ICON = 'badger.png'
+DEBUG = False
 
 def create_menu_item(menu, label, func):
     item = wx.MenuItem(menu, -1, label)
@@ -95,6 +97,7 @@ def main():
     else: 
         print "Did not import smart card module"
 
+    if DEBUG: dispatcher.update_inserted(True)
     TaskBarIcon()
     app.MainLoop()
 
@@ -102,4 +105,6 @@ def main():
 
     lock.shutdown()
 
-if __name__ == "__main__": main()
+if __name__ == "__main__":
+    if (len(sys.argv)==2 and sys.argv[1]=="inserted"): DEBUG=True
+    main()
