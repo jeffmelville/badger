@@ -13,12 +13,21 @@
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !include MultiUser.nsh
 
+!macro BadgerPrompt
+  MessageBox MB_OKCANCEL "Please ensure Badger is not running" IDOK badger_prompt_next IDCANCEL badger_prompt_quit
+  badger_prompt_quit:
+  quit
+  badger_prompt_next:
+!macroend
+
 Function .onInit
   !insertmacro MULTIUSER_INIT
+  !insertmacro BadgerPrompt
 FunctionEnd
 
 Function un.onInit
   !insertmacro MULTIUSER_UNINIT
+  !insertmacro BadgerPrompt
 FunctionEnd
 
   ;Name and file
