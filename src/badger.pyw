@@ -108,10 +108,9 @@ class Badger:
         cls.taskbar = TaskBarIcon(shutdown_func=cls.shutdown)
         cls.app.MainLoop()
 
-        cls.shutdown()
-
     @classmethod
     def shutdown(cls):
+
         print "Shutting down..."
         cls.taskbar.Destroy()
         cls.lock.shutdown()

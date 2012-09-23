@@ -24,18 +24,29 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from smartcard.CardMonitoring import CardMonitor, CardObserver
+from smartcard.ReaderMonitoring import ReaderMonitor, ReaderObserver
 from smartcard.util import *
 from smartcard.Exceptions import NoCardException
 from smartcard.System import readers
 
+class CallbackReaderObserver(ReaderObserver):
+    def __init__(self, target=None):
+        self._target = target
+
+    def update(self, observable, (addedreaders, removedreaders)):
+        self._target(observable, (addedreaders, removedreaders))
+
 class SmartCardMonitor(CardObserver):
     def __init__ (self, dispatcher): 
         self.cards = 0
+        self.n_readers = 0
+        self.monitoring = False #card observer is being monitored
         self.dispatcher = dispatcher
         self.dispatcher.update_inserted(self.get_status(), initial=True)
 
     def get_status(self): 
         cards = 0
+        self.n_readers = len(readers())
         for reader in readers():
             try: 
                 connection = reader.createConnection()
@@ -47,11 +58,28 @@ class SmartCardMonitor(CardObserver):
 
 
     def monitor (self): 
+        self.readermonitor = ReaderMonitor()
+        self.readerobserver = CallbackReaderObserver(self.update_readers)
+        self.readermonitor.addObserver(self.readerobserver)
         self.cardmonitor = CardMonitor()
-        self.cardmonitor.addObserver(self)
+        if self.n_readers > 0:
+            self.monitoring = True
+            self.cardmonitor.addObserver(self)
+
 
     def shutdown (self): 
-        self.cardmonitor.deleteObserver(self)
+        if self.monitoring:
+            self.cardmonitor.deleteObserver(self)
+
+    def update_readers(self, observable, (addedreaders, removedreaders)):
+        self.n_readers = len(readers())
+        if self.n_readers == 0 and self.monitoring:
+            self.cardmonitor.deleteObserver(self)
+            self.monitoring = False
+        elif self.n_readers > 0 and not self.monitoring:
+            self.cardmonitor.addObserver(self)
+            self.monitoring = True
+
 
     def update (self, observable, (addedcards, removedcards)):
         #update the number of cards currently inserted in the system
