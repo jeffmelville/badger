@@ -1,5 +1,6 @@
 badger-*.zip
 *.pyc
+*.exe
 build
 dist
 local
