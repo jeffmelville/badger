@@ -157,6 +157,7 @@ class LockMonitor(wx.Frame, WndProcHookMixin):
         if not self.monitoring:
             return
         WTSUnRegisterSessionNotification(self.GetHandle())
+        self.Destroy()
         self.monitoring = False
 
     def onSessionChange(self, wParam, lParam):
