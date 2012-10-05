@@ -1,5 +1,5 @@
 === badger ===
-v. 0.31
+v. 0.6
 (c) 2012 Jeff Melville
 https://github.com/jeffmelville/badger
 dev@jeffmelville.com
@@ -12,19 +12,34 @@ It provides a configurable set of notifications that are triggered when
 a computer is locked with a smartcard still inserted.
 
 === Requirements ===
-badger is currently targeted for Windows only. It relies on Windows API calls
-via ctypes to determine when the screen is locked and provide popup alerts.
-I have only really tested it with Windows 7 64-bit so far.
+badger is mainly targeted towards Windows. There is now support for lock screen
+detection in Linux and Mac OS X, but it is largely untested or has known issues.
 
+All required modules should be available via easy_install
+
+==== Common Requirements ====
 Python. Written with 2.7, but others should work.
-    -- Uses ctypes, built in as of Python 2.5
+appdirs (https://github.com/ActiveState/appdirs). Just the one .py is enough if you don't want to install it
 pyscard for smart card support (http://pyscard.sourceforge.net/) Tested with 1.6.10
+
+==== Windows specific Requirements =====
+ctypes (included as of Python 2.5)
 py2exe (only needed to create distributable exe's)
+NSIS (only needed to create installers)
+
+==== Mac OS X specific Requirements =====
+pcsc-lite 
+psutil (https://code.google.com/p/psutil/)
+py2app (only to generate standalone app)
+
+==== Linux specific requirements ====
+pcsc-lite
+Lock screen detection only supports XScreenSaver
 
 === Features ===
 badger currently supports 3 notification modes:
 - SoundHandler: Play a wav file (configurable)
-- PopupHandler: Display a popup message over the lock screen
+- PopupHandler: Display a popup message over the lock screen (Currently Windows only)
 - EmailHandler: Send an email (handy for sending an SMS to a phone)
 
 === Configuration ===
@@ -38,7 +53,7 @@ It will show up in the system tray. Add a shortcut to your startup folder!
 NOTE: Badger dies silently with configuration errors right now. Make sure the tray icon
 is there.
 
-=== Making an EXE ===
+=== Making an EXE (Windows) ===
 A build file is included to create a distributable exe file. Run:
 python setup.py py2exe
 in the top level dir. It will create a "build" folder that can be zipped and distributed.
@@ -47,12 +62,16 @@ The exe may have a dependency on MSVCP90.dll, which is not included in the build
 See http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=29 for details.
 In my experience, a lot of people already have this DLL.
 
+=== Making an installer (Windows) ===
+Build the exe, then build the NSIS installer with the included script. Define VER to set the version
+number of the installer exe
+
 === Known Issues ===
 See issue tracker at https://github.com/jeffmelville/badger for up to date info
-- UAC prompts are detected as lock screens and may generate notifications
 - There is a race case with the PopupHandler if the popup is generated too close to the screen
   being locked. The configurable "delay" parameter exists as a workaround for now. The 
   value in the default config.json has worked well on my machine
+- The Linux version hangs on exit
 
 === License ===
 badger is distributed as modified BSD:
