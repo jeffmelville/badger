@@ -19,8 +19,9 @@ All required modules should be available via easy_install
 
 ==== Common Requirements ====
 Python. Written with 2.7, but others should work.
-appdirs (https://github.com/ActiveState/appdirs). Just the one .py is enough if you don't want to install it
 pyscard for smart card support (http://pyscard.sourceforge.net/) Tested with 1.6.10
+wxPython (http://www.wxpython.org)
+appdirs (https://github.com/ActiveState/appdirs). Just the one .py is enough if you don't want to install it
 
 ==== Windows specific Requirements =====
 ctypes (included as of Python 2.5)
