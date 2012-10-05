@@ -23,17 +23,23 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import badgerlib
-import time
 import json
 import wx
 import sys
+import os
+import shutil
+
+import badgerlib
+import appdirs
 
 APP_NAME = "Badger"
+APP_VENDOR = "jeffmelville"
+APP_AUTHOR = "Jeff Melville"
 VERSION = 0.6
 TRAY_TOOLTIP = "Badger!"
 TRAY_ICON = 'badger.png'
 DEBUG = False
+
 
 def create_menu_item(menu, label, func):
     item = wx.MenuItem(menu, -1, label)
@@ -41,8 +47,10 @@ def create_menu_item(menu, label, func):
     menu.AppendItem(item)
     return item
 
+
 class TaskBarIcon(wx.TaskBarIcon):
-    def __init__ (self, shutdown_func=None):
+
+    def __init__(self, shutdown_func=None):
         super(TaskBarIcon, self).__init__()
         self.set_icon(TRAY_ICON)
         self.Bind(wx.EVT_TASKBAR_LEFT_DOWN, self.on_left_down)
@@ -52,6 +60,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 
     def CreatePopupMenu(self):
         menu = wx.Menu()
+        create_menu_item(menu, "Options", self.on_options)
         create_menu_item(menu, 'About', self.on_about)
         menu.AppendSeparator()
         create_menu_item(menu, 'Exit', self.on_exit)
@@ -61,23 +70,32 @@ class TaskBarIcon(wx.TaskBarIcon):
         icon = wx.IconFromBitmap(wx.Bitmap(path))
         self.SetIcon(icon, TRAY_TOOLTIP)
 
-    def on_left_down(self, event): pass
-    def on_about(self, event): 
-        dlg = wx.MessageDialog( None, "%s v. %s by Jeff Melville" % (APP_NAME, VERSION), "About", wx.OK)
+    def on_left_down(self, event):
+        pass
+
+    def on_options(self, event):
+        dlg = wx.MessageDialog(None, "Not implemented yet!", "Whoops!", wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
-    def on_exit (self, event):
+
+    def on_about(self, event):
+        dlg = wx.MessageDialog(None, "%s v. %s by Jeff Melville" % (APP_NAME, VERSION), "About", wx.OK)
+        dlg.ShowModal()
+        dlg.Destroy()
+
+    def on_exit(self, event):
         wx.CallAfter(self.shutdown_func)
+
 
 class Badger:
     handler_map = {"SoundHandler": badgerlib.SoundHandler, "PrintHandler": badgerlib.PrintHandler, "EmailHandler": badgerlib.EmailHandler, "PopupHandler": badgerlib.PopupHandler}
-    
+
     @classmethod
     def main(cls):
         cls.app = wx.PySimpleApp()
         try:
-            cls.config = json.loads(open("config.json", 'r').read())
-        except:
+            cls.config = cls.load_config()
+        except ValueError:
             print "Configuration error. Quit"
             return
         if not "handlers" in cls.config:
@@ -101,14 +119,32 @@ class Badger:
         if badgerlib.SmartCardMonitor:
             cls.sc = badgerlib.SmartCardMonitor(cls.dispatcher)
             cls.sc.monitor()
-        else: 
+        else:
             print "Did not import smart card module"
 
         if DEBUG: cls.dispatcher.update_inserted(True)
         cls.taskbar = TaskBarIcon(shutdown_func=cls.shutdown)
         cls.app.MainLoop()
 
-        cls.shutdown()
+    @classmethod
+    def load_config(cls):
+        config_filename = "config.json"
+        user_config_dir = appdirs.user_data_dir(APP_NAME, APP_AUTHOR)
+        default_config_dir = "."
+
+        default_config_path = os.path.abspath(os.path.join(default_config_dir, config_filename))
+        user_config_path = os.path.join(user_config_dir, config_filename)
+
+        if not os.path.exists(user_config_dir):
+            os.makedirs(user_config_dir)
+        if not os.path.exists(user_config_path):
+            shutil.copy(default_config_path, user_config_path)
+
+        config_file = open(user_config_path, 'r')
+        config_json = config_file.read()
+        config = json.loads(config_json)
+
+        return config
 
     @classmethod
     def shutdown(cls):
@@ -117,5 +153,6 @@ class Badger:
         cls.lock.shutdown()
 
 if __name__ == "__main__":
-    if (len(sys.argv)==2 and sys.argv[1]=="inserted"): DEBUG=True
+    if (len(sys.argv) == 2 and sys.argv[1] == "inserted"):
+        DEBUG = True
     Badger.main()
