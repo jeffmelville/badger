@@ -1,6 +1,6 @@
 === badger ===
-v. 0.6
-(c) 2012 Jeff Melville
+v. 0.7
+(c) 2012-2013 Jeff Melville
 https://github.com/jeffmelville/badger
 dev@jeffmelville.com
 

@@ -35,7 +35,7 @@ import appdirs
 APP_NAME = "Badger"
 APP_VENDOR = "jeffmelville"
 APP_AUTHOR = "Jeff Melville"
-VERSION = 0.6
+VERSION = 0.7
 TRAY_TOOLTIP = "Badger!"
 TRAY_ICON = 'badger.png'
 DEBUG = False
@@ -74,9 +74,10 @@ class TaskBarIcon(wx.TaskBarIcon):
         pass
 
     def on_options(self, event):
-        dlg = wx.MessageDialog(None, "Not implemented yet!", "Whoops!", wx.OK)
+        dlg = wx.MessageDialog(None, "Please restart Badger after updating config", APP_NAME, wx.OK)
         dlg.ShowModal()
         dlg.Destroy()
+        os.system("notepad.exe \"%s\"" % Badger.get_user_config_path())
 
     def on_about(self, event):
         dlg = wx.MessageDialog(None, "%s v. %s by Jeff Melville" % (APP_NAME, VERSION), "About", wx.OK)
@@ -125,6 +126,13 @@ class Badger:
         if DEBUG: cls.dispatcher.update_inserted(True)
         cls.taskbar = TaskBarIcon(shutdown_func=cls.shutdown)
         cls.app.MainLoop()
+
+    @classmethod
+    def get_user_config_path(cls):
+        config_filename = "config.json"
+        user_config_dir = appdirs.user_data_dir(APP_NAME, APP_AUTHOR)
+        user_config_path = os.path.join(user_config_dir, config_filename)
+        return user_config_path
 
     @classmethod
     def load_config(cls):
